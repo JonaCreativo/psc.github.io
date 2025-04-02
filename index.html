@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de la Viborita</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: #fce4ec;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            background-color: #fff;
+            border: 2px solid #d63384;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>¡Juega y Descubre la Sorpresa! 💖</h1>
+    <p>Come 10 puntos para desbloquear la sorpresa.</p>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        let snake = [{ x: 200, y: 200 }];
+        let direction = "RIGHT";
+        let food = { x: Math.floor(Math.random() * 20) * 20, y: Math.floor(Math.random() * 20) * 20 };
+        let score = 0;
+        
+        document.addEventListener("keydown", changeDirection);
+        
+        function changeDirection(event) {
+            const key = event.key;
+            if (key === "ArrowUp" && direction !== "DOWN") direction = "UP";
+            else if (key === "ArrowDown" && direction !== "UP") direction = "DOWN";
+            else if (key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
+            else if (key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
+        }
+        
+        function updateGame() {
+            let head = { ...snake[0] };
+            if (direction === "UP") head.y -= 20;
+            else if (direction === "DOWN") head.y += 20;
+            else if (direction === "LEFT") head.x -= 20;
+            else if (direction === "RIGHT") head.x += 20;
+            
+            if (head.x === food.x && head.y === food.y) {
+                score++;
+                food = { x: Math.floor(Math.random() * 20) * 20, y: Math.floor(Math.random() * 20) * 20 };
+            } else {
+                snake.pop();
+            }
+            
+            if (score >= 10) {
+                window.location.href = "v2.html";
+            }
+            
+            snake.unshift(head);
+            drawGame();
+        }
+        
+        function drawGame() {
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = "red";
+            ctx.fillRect(food.x, food.y, 20, 20);
+            
+            ctx.fillStyle = "green";
+            snake.forEach(part => ctx.fillRect(part.x, part.y, 20, 20));
+        }
+        
+        setInterval(updateGame, 150);
+    </script>
+</body>
+</html>
